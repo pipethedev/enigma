@@ -67,6 +67,9 @@ func (e *Enigmas) Add(email, appKey string) string {
 	//Validate email address
 
 	if isValidEmail(email) {
+		if len(appKey) < 32 {
+			log.Fatal("Error with app key:", "AppKey must be 32 characters long")
+		}
 		*e = append(*e, data{
 			Email:     email,
 			AppKey:    appKey,
