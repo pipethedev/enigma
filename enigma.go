@@ -3,12 +3,10 @@ package enigma
 import (
 	"context"
 	"crypto/aes"
-	"crypto/cipher"
 	"crypto/md5"
-	"crypto/rand"
 	"encoding/hex"
-	"fmt"
-	"io"
+	"log"
+	"regexp"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -30,21 +28,21 @@ func createHash(key string) string {
 	return hex.EncodeToString(hasher.Sum(nil))
 }
 
-func encrypt(data []byte, passphrase string) ([]byte, error) {
-	block, err := aes.NewCipher([]byte(createHash(passphrase)))
+func encrypt(plaintext string, key []byte) string {
+	// create cipher
+	c, err := aes.NewCipher(key)
+
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
-	gcm, err := cipher.NewGCM(block)
-	if err != nil {
-		return nil, err
-	}
-	nonce := make([]byte, gcm.NonceSize())
-	if _, err = io.ReadFull(rand.Reader, nonce); err != nil {
-		return nil, err
-	}
-	ciphertext := gcm.Seal(nonce, nonce, data, nil)
-	return ciphertext, nil
+
+	// allocate space for ciphered data
+	out := make([]byte, len(plaintext))
+
+	// encrypt
+	c.Encrypt(out, []byte(plaintext))
+	// return hex string
+	return hex.EncodeToString(out)
 }
 
 func init() {
@@ -61,24 +59,44 @@ func init() {
 	}
 }
 
-func (e *Enigmas) Add(email, appKey string) {
+func (e *Enigmas) Add(email, appKey string) string {
+	encryptedValue := ""
+
 	ctx := context.Background()
 
-	*e = append(*e, data{
-		Email:     email,
-		AppKey:    appKey,
-		CreatedAt: time.Now(),
-	})
+	//Validate email address
 
-	encryptedValue, _ := encrypt([]byte(appKey), email)
+	if isValidEmail(email) {
+		*e = append(*e, data{
+			Email:     email,
+			AppKey:    appKey,
+			CreatedAt: time.Now(),
+		})
 
-	fmt.Println(string(encryptedValue))
+		encryptedValue = encrypt(email, []byte(appKey))
 
-	err := rdb.Set(ctx, email, encryptedValue, 0).Err()
+		err := rdb.Set(ctx, email, encryptedValue, 0).Err()
 
-	if err != nil {
-		panic(err)
+		if err != nil {
+			panic(err)
+		}
 	}
+	return encryptedValue
+}
+
+func isValidEmail(email string) bool {
+	regex := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
+
+	r, err := regexp.Compile(regex)
+	if err != nil {
+		log.Fatal("Error compiling regular expression:", err)
+		return false
+	}
+
+	if !r.MatchString(email) {
+		log.Fatal("Invalid email address")
+	}
+	return r.MatchString(email)
 }
 
 func getValue(key string) {
