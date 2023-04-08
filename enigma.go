@@ -87,6 +87,21 @@ func (e *Enigmas) Add(email, appKey string) string {
 	return encryptedValue
 }
 
+func (e *Enigmas) Get(email string) string {
+	ctx := context.Background()
+
+	val, err := rdb.Get(ctx, email).Result()
+
+	if err != nil {
+		panic(err)
+	}
+
+	if len(val) == 0 {
+		log.Fatal("Error with email:", "Email not found")
+	}
+	return val
+}
+
 func isValidEmail(email string) bool {
 	regex := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
 
@@ -100,14 +115,4 @@ func isValidEmail(email string) bool {
 		log.Fatal("Invalid email address")
 	}
 	return r.MatchString(email)
-}
-
-func getValue(key string) {
-	ctx := context.Background()
-
-	val, err := rdb.Get(ctx, key).Result()
-	if err != nil {
-		panic(err)
-	}
-	println(val)
 }
