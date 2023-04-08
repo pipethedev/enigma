@@ -21,15 +21,19 @@ func main() {
 
 	switch {
 	case *create:
-		values, err := getInput(os.Stdin, flag.Args()...)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err.Error())
-			os.Exit(1)
-		}
+		scanner := bufio.NewScanner(os.Stdin)
 
-		words := strings.Split(values, " ")
+		fmt.Print("What is your email address ? ")
 
-		hermesKey := enigmas.Add(words[0], words[1])
+		scanner.Scan()
+		email := scanner.Text()
+
+		fmt.Print("Provide an app key for encryption ? ")
+
+		scanner.Scan()
+		key := scanner.Text()
+
+		hermesKey := enigmas.Add(email, key)
 
 		fmt.Printf("Hermes Key: %s", hermesKey)
 	default:
