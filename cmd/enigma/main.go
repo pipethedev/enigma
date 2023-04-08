@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"os/exec"
 
 	"github.com/pipethedev/enigma"
 )
@@ -19,6 +20,15 @@ func main() {
 	enigmas := enigma.Enigmas{}
 
 	scanner := bufio.NewScanner(os.Stdin)
+
+	// Check if the user has sudo privileges
+	cmd := exec.Command("sudo", "-n", "true")
+
+	err := cmd.Run()
+	if err != nil {
+		println("This command requires sudo privileges.")
+		return
+	}
 
 	switch {
 	case *create:
