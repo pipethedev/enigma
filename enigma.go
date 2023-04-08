@@ -93,7 +93,8 @@ func (e *Enigmas) Get(email string) string {
 	val, err := rdb.Get(ctx, email).Result()
 
 	if err != nil {
-		panic(err)
+		//panic(err)
+		log.Fatal("Error with email:", "Unable to fetch email")
 	}
 
 	if len(val) == 0 {
