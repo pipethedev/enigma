@@ -1,8 +1,10 @@
 package enigma
 
 import (
+	"bytes"
 	"context"
 	"crypto/aes"
+	"crypto/cipher"
 	"crypto/md5"
 	"encoding/hex"
 	"log"
@@ -10,6 +12,7 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
+	evp "github.com/walkert/go-evp"
 )
 
 type data struct {
@@ -28,21 +31,44 @@ func createHash(key string) string {
 	return hex.EncodeToString(hasher.Sum(nil))
 }
 
-func encrypt(plaintext string, key []byte) string {
-	// create cipher
-	c, err := aes.NewCipher(key)
-
+func Aes256Encode(plaintext string, key string, iv string, blockSize int) string {
+	bKey := []byte(key)
+	bIV := []byte(iv)
+	bPlaintext := PKCS5Padding([]byte(plaintext), blockSize, len(plaintext))
+	block, err := aes.NewCipher(bKey)
 	if err != nil {
 		panic(err)
 	}
+	ciphertext := make([]byte, len(bPlaintext))
+	mode := cipher.NewCBCEncrypter(block, bIV)
+	mode.CryptBlocks(ciphertext, bPlaintext)
+	return hex.EncodeToString(ciphertext)
+}
 
-	// allocate space for ciphered data
-	out := make([]byte, len(plaintext))
+func PKCS5Padding(ciphertext []byte, blockSize int, after int) []byte {
+	padding := (blockSize - len(ciphertext)%blockSize)
+	padtext := bytes.Repeat([]byte{byte(padding)}, padding)
+	return append(ciphertext, padtext...)
+}
 
-	// encrypt
-	c.Encrypt(out, []byte(plaintext))
-	// return hex string
-	return hex.EncodeToString(out)
+func encrypt(rawKey string, plainText []byte) string {
+	salt := []byte("ABCDEFGH")
+
+	key, iv := evp.BytesToKeyAES256CBCMD5([]byte(salt), []byte(rawKey))
+
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return err.Error()
+	}
+
+	cipherText := make([]byte, len(plainText))
+
+	encryptStream := cipher.NewCTR(block, iv)
+	encryptStream.XORKeyStream(cipherText, plainText)
+
+	ivHex := hex.EncodeToString(iv)
+	encryptedDataHex := hex.EncodeToString([]byte("Salted__")) + hex.EncodeToString(salt) + hex.EncodeToString(cipherText)
+	return ivHex + ":" + encryptedDataHex
 }
 
 func init() {
@@ -67,8 +93,8 @@ func (e *Enigmas) Add(email, appKey string) string {
 	//Validate email address
 
 	if isValidEmail(email) {
-		if len(appKey) < 32 {
-			log.Fatal("Error with app key:", "AppKey must be 32 characters long")
+		if len(appKey) < 10 {
+			log.Fatal("Error with app key:", "AppKey must be greater than 10 characters long")
 		}
 		*e = append(*e, data{
 			Email:     email,
@@ -76,7 +102,7 @@ func (e *Enigmas) Add(email, appKey string) string {
 			CreatedAt: time.Now(),
 		})
 
-		encryptedValue = encrypt(email, []byte(appKey))
+		encryptedValue = encrypt(appKey, []byte(email+"_"+appKey+"_"+time.Now().String()))
 
 		err := rdb.Set(ctx, email, encryptedValue, 0).Err()
 
