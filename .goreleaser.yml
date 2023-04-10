@@ -6,14 +6,6 @@ builds:
     goarch:
       - amd64
       - arm64
-    hooks:
-      pre: 
-      - cmd: touch credentials.json
-      |
-        - echo '{' > credentials.json
-          echo "  \"address\": \"$REDIS_ADDRESS\"," >> credentials.json
-          echo "  \"password\": \"$REDIS_PASSWORD\"" >> credentials.json
-          echo '}' >> credentials.json
     env:
       - CGO_ENABLED=0
     flags:

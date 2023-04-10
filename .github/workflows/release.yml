@@ -15,8 +15,8 @@ jobs:
       - name: Set up credentials file
         run: |
           echo '{' > credentials.json
-          echo "  \"address\": \"$REDIS_ADDRESS\"," >> credentials.json
-          echo "  \"password\": \"$REDIS_PASSWORD\"" >> credentials.json
+          echo "  \"address\": \"${{ secrets.REDIS_ADDRESS }}\"," >> credentials.json
+          echo "  \"password\": \"${{ secrets.REDIS_PASSWORD }}\"" >> credentials.json
           echo '}' >> credentials.json
       -
         name: Checkout
@@ -31,11 +31,6 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: 1.17
-      -
-        name: Set environment variables
-        run: |
-          export REDIS_ADDRESS="${{ secrets.REDIS_ADDRESS }}"
-          export REDIS_PASSWORD="${{ secrets.REDIS_PASSWORD }}"
       -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
