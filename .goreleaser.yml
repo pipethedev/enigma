@@ -1,5 +1,5 @@
 builds:
-  - main: ./cmd/enigma/main.go
+  - main: main.go
     ldflags: -s -w -X main.Secrets=$(cat secrets.env | base64)
     binary: enigma
     goos:
