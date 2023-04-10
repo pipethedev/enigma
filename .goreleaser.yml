@@ -9,7 +9,7 @@ builds:
       - arm64
     hooks:
       pre:
-        - cmd: cp credentials.json ./cmd/credentials.json
+        - cmd: touch credentials.json
     env:
       - CGO_ENABLED=0
     flags:
