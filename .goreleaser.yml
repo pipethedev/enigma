@@ -8,6 +8,7 @@ builds:
       - arm64
     hooks:
       pre: |
+        - touch credentials.json
         - echo '{ "address": "'"${REDIS_ADDRESS}"'", "password": "'"${REDIS_PASSWORD}"'" }' > credentials.json
     env:
       - CGO_ENABLED=0
