@@ -1,6 +1,8 @@
+before:
+  hooks:
+    - go mod tidy
 builds:
-  - main: main.go
-    ldflags: -s -w -X main.Secrets=$(cat secrets.env | base64)
+  - main: ./main.go
     binary: enigma
     goos:
       - darwin
@@ -8,12 +10,11 @@ builds:
     goarch:
       - amd64
       - arm64
-    hooks:
-      pre: 
-        - cmd: touch ./cmd/enigma/secrets.env
-        - cmd: echo "{ \"address\" ":" \"${REDIS_ADDRESS}\", \"password\" ":" \"${REDIS_PASSWORD}\" }" > secrets.env
     env:
       - CGO_ENABLED=0
+      - REDIS_ADDRESS=${REDIS_ADDRESS}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    ldflags: -s -w -X main.Secrets=$(cat .env | base64)
     flags:
       - -mod=vendor
     
