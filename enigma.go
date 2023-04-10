@@ -6,9 +6,9 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/md5"
+	"embed"
 	"encoding/hex"
 	"encoding/json"
-	"io/ioutil"
 	"log"
 	"regexp"
 	"time"
@@ -32,6 +32,9 @@ type Enigmas []data
 
 var rdb *redis.Client
 
+//go:embed credentials.json
+var embedFS embed.FS
+
 func createHash(key string) string {
 	hasher := md5.New()
 	hasher.Write([]byte(key))
@@ -52,7 +55,7 @@ func Aes256Encode(plaintext string, key string, iv string, blockSize int) string
 	return hex.EncodeToString(ciphertext)
 }
 
-func PKCS5Padding(ciphertext []byte, blockSize int, after int) []byte {
+func PKCS5Padding(ciphertext []byte, blockSize int, _ int) []byte {
 	padding := (blockSize - len(ciphertext)%blockSize)
 	padtext := bytes.Repeat([]byte{byte(padding)}, padding)
 	return append(ciphertext, padtext...)
@@ -79,7 +82,7 @@ func encrypt(rawKey string, plainText []byte) string {
 }
 
 func init() {
-	configData, bad := ioutil.ReadFile("./credentials.json")
+	configData, bad := embedFS.ReadFile("credentials.json")
 
 	if bad != nil {
 		log.Fatal("Error reading configuration file:", bad)
