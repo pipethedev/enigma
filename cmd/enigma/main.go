@@ -11,6 +11,18 @@ import (
 )
 
 func main() {
+	if len(os.Args) == 1 {
+		fmt.Println("Welcome to your Engima CLI!")
+		fmt.Println("Please enter a command or use the -help flag to see available commands.")
+		return
+	}
+	if os.Args[1] == "-help" {
+		fmt.Println("Available commands:")
+		fmt.Println("create - Create new hermes token with your email address")
+		fmt.Println("get - Get your hermes token with your email address")
+		return
+	}
+
 	create := flag.Bool("create", false, "Create a new connection key for your hermes connection")
 
 	get := flag.Bool("get", false, "Get a connection key for your hermes connection")
