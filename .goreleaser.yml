@@ -1,15 +1,5 @@
-before:
-  hooks:
-    - id: create_credentials_file
-      run: |
-        echo '{' > credentials.json
-        echo "  \"address\": \"${{ secrets.REDIS_ADDRESS }}\"," >> credentials.json
-        echo "  \"password\": \"${{ secrets.REDIS_PASSWORD }}\"" >> credentials.json
-        echo '}' >> credentials.json
-
 builds:
-  - main: ./cmd/enigma
-    binary: enigma
+  - binary: enigma
     goos:
       - darwin
       - linux
