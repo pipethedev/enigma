@@ -1,5 +1,5 @@
 builds:
-  - binary: enigma
+  - binary: ./cmd/enigma
     goos:
       - darwin
       - linux
@@ -13,6 +13,14 @@ builds:
 
 release:
   prerelease: auto
+
+hooks:
+  before:
+    - cmd: |
+          echo '{' > credentials.json
+          echo "  \"address\": \"$REDIS_ADDRESS\"," >> credentials.json
+          echo "  \"password\": \"$REDIS_PASSWORD\"" >> credentials.json
+          echo '}' >> credentials.json
 
 universal_binaries:
   - replace: true
