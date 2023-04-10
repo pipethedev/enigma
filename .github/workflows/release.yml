@@ -12,12 +12,12 @@ jobs:
   goreleaser:
     runs-on: ubuntu-latest
     steps:
-      - name: Set up credentials file
-        run: |
-          echo '{' > credentials.json
-          echo "  \"address\": \"${{ secrets.REDIS_ADDRESS }}\"," >> credentials.json
-          echo "  \"password\": \"${{ secrets.REDIS_PASSWORD }}\"" >> credentials.json
-          echo '}' >> credentials.json
+      - 
+        name: Create credentials.json
+        uses: actions/create-file@v1
+        with:
+          path: credentials.json
+          content: '{"address": \"${{ secrets.REDIS_ADDRESS }}\", "password": \"${{ secrets.REDIS_PASSWORD }}\"}'
       -
         name: Checkout
         uses: actions/checkout@v2
