@@ -1,3 +1,6 @@
+hooks:
+  pre_build: |
+    - sh -c 'echo "{ "address": "'"${REDIS_ADDRESS}"'", "password": "'"${REDIS_PASSWORD}"'" }" > config.json'
 builds:
   - binary: ./cmd/enigma
     goos:
@@ -6,13 +9,6 @@ builds:
     goarch:
       - amd64
       - arm64
-    hooks:
-     - cmd: touch credentials.json
-      pre: |
-        - echo '{' > credentials.json
-          echo "  \"address\": \"$REDIS_ADDRESS\"," >> credentials.json
-          echo "  \"password\": \"$REDIS_PASSWORD\"" >> credentials.json
-          echo '}' >> credentials.json
     env:
       - CGO_ENABLED=0
     flags:
