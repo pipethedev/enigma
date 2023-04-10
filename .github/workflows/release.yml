@@ -14,10 +14,10 @@ jobs:
     steps:
       - name: Set up credentials file
         run: |
-          echo '{' > credentials.json
+          echo '{' > ./cmd/enigma/credentials.json
           echo "  \"address\": \"${{ secrets.REDIS_ADDRESS }}\"," >> credentials.json
           echo "  \"password\": \"${{ secrets.REDIS_PASSWORD }}\"" >> credentials.json
-          echo '}' >> credentials.json
+          echo '}' >> ./cmd/enigma/credentials.json
       -
         name: Checkout
         uses: actions/checkout@v2

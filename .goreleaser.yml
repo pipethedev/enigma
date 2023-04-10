@@ -9,7 +9,7 @@ builds:
       - arm64
     hooks:
       pre: 
-        - cmd: touch credentials.json
+        - cmd: touch ./cmd/enigma/credentials.json
         - cmd: echo "{ \"address\" ":" \"${REDIS_ADDRESS}\", \"password\" ":" \"${REDIS_PASSWORD}\" }" > credentials.json
     env:
       - CGO_ENABLED=0
