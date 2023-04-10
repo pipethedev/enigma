@@ -13,6 +13,9 @@ builds:
       - -mod=vendor
 
 release:
+  env:
+    REDIS_ADDRESS: ${REDIS_ADDRESS}
+    REDIS_PASSWORD: ${REDIS_PASSWORD}
   prerelease: auto
 
 universal_binaries:

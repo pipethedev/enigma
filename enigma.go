@@ -7,6 +7,8 @@ import (
 	"crypto/cipher"
 	"crypto/md5"
 	"encoding/hex"
+	"encoding/json"
+	"io/ioutil"
 	"log"
 	"regexp"
 	"time"
@@ -19,6 +21,11 @@ type data struct {
 	Email     string
 	AppKey    string
 	CreatedAt time.Time
+}
+
+type RedisConfig struct {
+	Address  string `json:"address"`
+	Password string `json:"password"`
 }
 
 type Enigmas []data
@@ -72,11 +79,25 @@ func encrypt(rawKey string, plainText []byte) string {
 }
 
 func init() {
+	configData, bad := ioutil.ReadFile("./credentials.json")
+
+	if bad != nil {
+		log.Fatal("Error reading configuration file:", bad)
+	}
+
+	var config RedisConfig
+
+	bad = json.Unmarshal(configData, &config)
+
+	if bad != nil {
+		log.Fatal("Error reading configuration file:", bad)
+	}
+
 	ctx := context.Background()
 	rdb = redis.NewClient(&redis.Options{
-		Addr:     "redis-10911.c8.us-east-1-4.ec2.cloud.redislabs.com:10911",
-		Password: "Co8f8rJRzhjd3CLbXIuFpDBAD63KiDXh", // no password set
-		DB:       0,                                  // use default DB
+		Addr:     config.Address,
+		Password: config.Password,
+		DB:       0,
 	})
 
 	_, err := rdb.Ping(ctx).Result()

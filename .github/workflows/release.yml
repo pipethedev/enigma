@@ -11,7 +11,16 @@ permissions:
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
+    env:
+        REDIS_ADDRESS: ${{ secrets.REDIS_ADDRESS }}
+        REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
     steps:
+      - name: Set up credentials file
+        run: |
+          echo '{' > credentials.json
+          echo "  \"address\": \"$REDIS_ADDRESS\"," >> credentials.json
+          echo "  \"password\": \"$REDIS_PASSWORD\"" >> credentials.json
+          echo '}' >> credentials.json
       -
         name: Checkout
         uses: actions/checkout@v2
