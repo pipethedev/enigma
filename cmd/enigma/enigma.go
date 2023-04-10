@@ -6,10 +6,9 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/md5"
-	"embed"
 	"encoding/hex"
-	"encoding/json"
 	"log"
+	"os"
 	"regexp"
 	"time"
 
@@ -23,17 +22,9 @@ type data struct {
 	CreatedAt time.Time
 }
 
-type RedisConfig struct {
-	Address  string `json:"address"`
-	Password string `json:"password"`
-}
-
 type Enigmas []data
 
 var rdb *redis.Client
-
-//go:embed credentials.json
-var embedFS embed.FS
 
 func createHash(key string) string {
 	hasher := md5.New()
@@ -82,24 +73,10 @@ func encrypt(rawKey string, plainText []byte) string {
 }
 
 func init() {
-	configData, bad := embedFS.ReadFile("credentials.json")
-
-	if bad != nil {
-		log.Fatal("Error reading configuration file:", bad)
-	}
-
-	var config RedisConfig
-
-	bad = json.Unmarshal(configData, &config)
-
-	if bad != nil {
-		log.Fatal("Error reading configuration file:", bad)
-	}
-
 	ctx := context.Background()
 	rdb = redis.NewClient(&redis.Options{
-		Addr:     config.Address,
-		Password: config.Password,
+		Addr:     os.Getenv("REDIS_ADDRESS"),
+		Password: os.Getenv("REDIS_PASSWORD"),
 		DB:       0,
 	})
 

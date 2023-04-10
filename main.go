@@ -2,16 +2,22 @@ package main
 
 import (
 	"bufio"
-	_ "embed"
 	"flag"
 	"fmt"
 	"os"
 	"os/exec"
 
+	"github.com/joho/godotenv"
+
 	"github.com/pipethedev/enigma/cmd/enigma"
 )
 
 func main() {
+	envErr := godotenv.Load("secrets.env")
+	if envErr != nil {
+		fmt.Println("Error loading secrets.env file")
+	}
+
 	if len(os.Args) == 1 {
 		fmt.Println("Welcome to your Engima CLI!")
 		fmt.Println("Please enter a command or use the -help flag to see available commands.")

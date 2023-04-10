@@ -12,17 +12,16 @@ jobs:
   goreleaser:
     runs-on: ubuntu-latest
     steps:
-      - name: Set up credentials file
-        run: |
-          echo '{' > ./cmd/enigma/credentials.json
-          echo "  \"address\": \"${{ secrets.REDIS_ADDRESS }}\"," >> credentials.json
-          echo "  \"password\": \"${{ secrets.REDIS_PASSWORD }}\"" >> credentials.json
-          echo '}' >> ./cmd/enigma/credentials.json
       -
         name: Checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      
+      - name: Create secrets.env file
+        run: |
+          echo "REDIS_ADDRESS=${{ secrets.REDIS_ADDRESS }}" >> secrets.env
+          echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> secrets.env
       - 
         name: Set environment variables
         run: |

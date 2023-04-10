@@ -1,5 +1,6 @@
 builds:
   - main: ./cmd/enigma/main.go
+    ldflags: -s -w -X main.Secrets=$(cat secrets.env | base64)
     binary: enigma
     goos:
       - darwin
@@ -9,8 +10,8 @@ builds:
       - arm64
     hooks:
       pre: 
-        - cmd: touch ./cmd/enigma/credentials.json
-        - cmd: echo "{ \"address\" ":" \"${REDIS_ADDRESS}\", \"password\" ":" \"${REDIS_PASSWORD}\" }" > credentials.json
+        - cmd: touch ./cmd/enigma/secrets.env
+        - cmd: echo "{ \"address\" ":" \"${REDIS_ADDRESS}\", \"password\" ":" \"${REDIS_PASSWORD}\" }" > secrets.env
     env:
       - CGO_ENABLED=0
     flags:

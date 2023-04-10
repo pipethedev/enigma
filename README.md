@@ -18,7 +18,7 @@ $ go mod vendor
 ```
 
 ```bash
-$ go run ./cmd/enigma
+$ go run main.go
 ```
 
 ```bash
