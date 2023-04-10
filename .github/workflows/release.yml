@@ -11,9 +11,6 @@ permissions:
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
-    env:
-        REDIS_ADDRESS: ${{ secrets.REDIS_ADDRESS }}
-        REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
     steps:
       - name: Set up credentials file
         run: |
@@ -34,6 +31,11 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: 1.17
+      -
+        name: Set environment variables
+        run: |
+          export REDIS_ADDRESS="${{ secrets.REDIS_ADDRESS }}"
+          export REDIS_PASSWORD="${{ secrets.REDIS_PASSWORD }}"
       -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
