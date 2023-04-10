@@ -20,6 +20,10 @@ $ go mod vendor
 ```bash
 $ go run ./cmd/enigma
 ```
+
+```bash
+$ go build ./cmd/enigma/main.go
+```
 >Note: You can download the executable from [here](https://github.com/pipethedev/enigma/tags) instead if you don't want to set it up using the repository.
 
 ## Usage
@@ -27,7 +31,7 @@ $ go run ./cmd/enigma
 Create new hermes token
 
 ```sh
-go run ./cmd/enigma -create
+go run ./cmd/enigma/main.go -create
 ```
 
 Fetch existing hermes token

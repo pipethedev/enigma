@@ -8,7 +8,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/pipethedev/enigma"
+	"github.com/pipethedev/enigma/cmd/enigma"
 )
 
 func main() {
