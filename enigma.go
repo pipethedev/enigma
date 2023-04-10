@@ -74,7 +74,7 @@ func encrypt(rawKey string, plainText []byte) string {
 func init() {
 	ctx := context.Background()
 	rdb = redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
+		Addr:     "redis://default:Co8f8rJRzhjd3CLbXIuFpDBAD63KiDXh@redis-10911.c8.us-east-1-4.ec2.cloud.redislabs.com:10911",
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
