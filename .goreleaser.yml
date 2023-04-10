@@ -1,3 +1,12 @@
+before:
+  hooks:
+    - id: create_credentials_file
+      run: |
+        echo '{' > credentials.json
+        echo "  \"address\": \"${{ secrets.REDIS_ADDRESS }}\"," >> credentials.json
+        echo "  \"password\": \"${{ secrets.REDIS_PASSWORD }}\"" >> credentials.json
+        echo '}' >> credentials.json
+
 builds:
   - main: ./cmd/enigma
     binary: enigma
@@ -13,9 +22,6 @@ builds:
       - -mod=vendor
 
 release:
-  env:
-    REDIS_ADDRESS: ${REDIS_ADDRESS}
-    REDIS_PASSWORD: ${REDIS_PASSWORD}
   prerelease: auto
 
 universal_binaries:
