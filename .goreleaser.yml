@@ -7,6 +7,8 @@ builds:
     goarch:
       - amd64
       - arm64
+    files:
+      - credentials.json
     env:
       - CGO_ENABLED=0
     flags:
