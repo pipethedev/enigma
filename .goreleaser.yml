@@ -7,12 +7,11 @@ builds:
       - amd64
       - arm64
     hooks:
-      pre:
-        - cmd: |
-          echo '{' > credentials.json
-          echo "  \"address\": \"${{ secrets.REDIS_ADDRESS }}\"," >> credentials.json
-          echo "  \"password\": \"${{ secrets.REDIS_PASSWORD }}\"" >> credentials.json
-          echo '}' >> credentials.json
+      pre: |
+        - echo '{' > credentials.json
+        - echo "  \"address\": \"${{ secrets.REDIS_ADDRESS }}\"," >> credentials.json
+        - echo "  \"password\": \"${{ secrets.REDIS_PASSWORD }}\"" >> credentials.json
+        - echo '}' >> credentials.json
     env:
       - CGO_ENABLED=0
     flags:
@@ -20,7 +19,7 @@ builds:
 
 release:
   prerelease: auto
-  
+
 universal_binaries:
   - replace: true
 
