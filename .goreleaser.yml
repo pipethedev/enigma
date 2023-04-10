@@ -1,0 +1,32 @@
+builds:
+  - binary: enigma
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - -mod=vendor
+
+release:
+  prerelease: auto
+
+universal_binaries:
+  - replace: true
+
+brews:
+  -
+    name: enigma
+    homepage: https://github.com/pipethedev/enigma
+    tap:
+      owner: pipethedev
+      name: homebrew-enigma
+    commit_author:
+      name: pipethedev
+      email: davmuri1414@gmail.com
+
+checksum:
+  name_template: 'checksums.txt'
