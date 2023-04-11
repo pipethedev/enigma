@@ -15,7 +15,7 @@ import (
 func main() {
 	envErr := godotenv.Load(".env")
 	if envErr != nil {
-		fmt.Println("Error loading secrets.env file")
+		fmt.Println("Error loading .env file")
 	}
 
 	if len(os.Args) == 1 {

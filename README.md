@@ -16,6 +16,13 @@ $ cd enigma
 ```bash
 $ go mod vendor
 ```
+## Usage
+
+```env
+REDIS_ADDRESS=<REDIS_ADDRESS>
+REDIS_PASSWORD=<REDIS_PASSWORD>
+```
+
 
 ```bash
 $ go run main.go
